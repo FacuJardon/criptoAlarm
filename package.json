@@ -1,0 +1,29 @@
+{
+  "name": "criptoalarm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon ./dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FacuJardon/criptoAlarm.git"
+  },
+  "author": "FacuJardon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FacuJardon/criptoAlarm/issues"
+  },
+  "homepage": "https://github.com/FacuJardon/criptoAlarm#readme",
+  "dependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "@types/express": "^4.17.13",
+    "axios": "^0.23.0",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.13",
+    "typescript": "^4.4.4"
+  }
+}
