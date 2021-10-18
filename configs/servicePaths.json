@@ -1,0 +1,5 @@
+{
+    "values": [
+        {   "name": "binanceApiUri", "value": "https://api.binance.com/api/v3/avgPrice?symbol="   }
+    ]
+}

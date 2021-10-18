@@ -1,10 +1,16 @@
 // import express from 'express'
 // import cookieParser from 'cookie-parser';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosPromise, AxiosRequestConfig, AxiosRequestHeaders, AxiosResponse } from 'axios';
 
 import {ICriptoPriceService} from './models/criptoPriceService.model'
 import appConfig from './models/config.model'
 
+const url:string =  appConfig.getValueByName("binanceApiUri")+appConfig.getCoinSymbolByName("bitcoin");
+const headersService = {
+    headers: {
+        'X-CMC_PRO_API_KEY': 'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c'
+    }
+}
 
 // const PORT = 3000;
 // const app = express();
@@ -19,9 +25,10 @@ import appConfig from './models/config.model'
 scanCripto();
 
 async function scanCripto() {
-    let res:AxiosResponse<ICriptoPriceService> = await axios.get(appConfig.getValueByName("binanceApiUri"));
+
+    let res:AxiosResponse<ICriptoPriceService> = await axios.get(url, headersService);
     
-    if (res.data.data.indexPrice != undefined)
-        console.log(res.data.data.indexPrice);
+    if (res.data.price != undefined)
+        console.log(res.data.price);
     setTimeout(() => scanCripto(), 1000);
 }

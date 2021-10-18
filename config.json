@@ -1,5 +1,0 @@
-{
-    "values": [
-        {   "name": "binanceApiUri", "value": "https://vapi.binance.com/vapi/v1/index?underlying=BTCUSDT"   }
-    ]
-}
