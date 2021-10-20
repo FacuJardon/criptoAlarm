@@ -1,5 +1,6 @@
 {
     "values": [
+        {   "name": "apiUri", "value": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/market-pairs/latest"   },
         {   "name": "binanceApiUri", "value": "https://api.binance.com/api/v3/avgPrice?symbol="   }
     ]
 }

@@ -1,6 +1,8 @@
 {
     "values": [
-        {   "name": "bitcoin", "value": "BTCUSDT"   },
-        {   "name": "ether", "value": "ETHUSDT"   }
+        {   "id": 1, "name": "BITCOIN", "value": "BTCUSDT"   },
+        {   "id": 2, "name": "ETHEREUM", "value": "ETHUSDT"   },
+        {   "id": 3, "name": "CARDANO", "value": "ADAUSDT"   },
+        {   "id": 4, "name": "SOLANA", "value": "SOLUSDT"   }
     ]
 }

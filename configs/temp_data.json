@@ -1,0 +1,8 @@
+{
+    "values": [
+        {   "userId": 1, "symbolID": 1, "alarm": 63000.0 },
+        {   "userId": 2, "symbolID": 2, "alarm": 3800.0 },
+        {   "userId": 2, "symbolID": 3, "alarm": 2.5 },
+        {   "userId": 4, "symbolID": 1, "alarm": 200.0 }
+    ]
+}
