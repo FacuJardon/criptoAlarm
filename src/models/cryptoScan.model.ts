@@ -1,42 +1,52 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { configModel, ICriptoPriceService } from './models';
+import { IAlarms, IAlarm } from './alarm.model';
+import { alarmRepositorie } from '../repositories/repositories';
+import { appConfig, ICriptoPriceService } from './models';
 
 
 
 export default class cryptoScan {
+    private topAlarmList?:IAlarms;
+    private bottomAlarmList?:IAlarms;
+    private price?:number;
     coinId:number | string;
-    topAlarm:number | null = null;
-    bottomAlarm:number | null = null;
+    topAlarm?:IAlarm;
+    bottomAlarm?:IAlarm;
     scanning:boolean = false;
     
-    constructor(coinId:number | string, topAlarm?:number, bottomAlarm?:number)   {
+    constructor(coinId:number | string)   {
         
         if (typeof coinId != 'string')
-            this.coinId = this.getCryptoPairById(coinId);
-        else this.coinId = coinId;
+            this.coinId = appConfig.getCoinSymbolByID(coinId);
+        else 
+            this.coinId = appConfig.getCoinSymbolByName(coinId);
 
-        if (bottomAlarm !== undefined)
-            this.bottomAlarm = bottomAlarm;
-        if (topAlarm !== undefined)
-            this.topAlarm = topAlarm;
+        this.fillAlarmList();
     }
-
+    
     get isScanning():boolean {
         return this.scanning;
     }
+    
+    async fillAlarmList()  {
+        let price:number = await this.requestPrice();
+        
+        this.topAlarmList = alarmRepositorie.getTopAlarmList(price);
+        this.topAlarm = this.topAlarmList.values.shift();
 
-    getCryptoPairById(id:number):string {
-        return configModel.getCoinSymbolByID(id);
+        this.bottomAlarmList = alarmRepositorie.getBottomAlarmList(price);
+        this.bottomAlarm = this.bottomAlarmList.values.shift();
     }
-    stopScan()  {
+
+    stopScan():void  {
         this.scanning = false;
     }
-    startScan()    {
+
+    startScan():void    {
         
-        if (this.isNullAlarms())  {
+        if (this.areNullAlarms())  {
             console.log("Alarmas no seteadas.");
-            return;
         }
         if (this.isScanning)    {
             console.log("El scanner ya esta activo.");
@@ -46,37 +56,49 @@ export default class cryptoScan {
         this.requestApi();
     }
 
-    isNullAlarms():boolean  {
-        return this.topAlarm == null || this.bottomAlarm == null
+    areNullAlarms():boolean  {
+        return this.topAlarm == null && this.bottomAlarm == null
     }
 
-    async requestApi() {
-
-        let url:string =  configModel.getValueByName("binanceApiUri")+this.coinId;
+    async requestPrice(): Promise<number>    {
+        let url:string =  appConfig.getValueByName("binanceApiUri")+this.coinId;
         let res:AxiosResponse<ICriptoPriceService> = await axios.get(url);
-        
+
         if (res.data.price != undefined)
-            this.validateAlarms(parseFloat(res.data.price));
-        else console.log("ApiError: Status: ["+res.status+"] "+res.data);
+            return parseFloat(res.data.price);
+        
+        console.log("ApiError: Status: ["+res.status+"] "+res.data);
+        return -1.0;
+    }
+    
+    async requestApi() {
+        
+        this.price = await this.requestPrice();
+
+        this.validateAlarms(this.price);
 
         if (this.scanning)
             setTimeout(() => this.requestApi(), 1000);
     }
 
-    validateAlarms(price:number) {
-        if (this.topAlarm !== null && this.topAlarm! < price)   {
+    validateAlarms(price:number):void {
+        if (this.topAlarm !== undefined && this.topAlarm.alarm < price)   {
             console.log(this.coinId+": Alarma superior excedida: "+price);
-            this.topAlarm = this.getNextTopAlarm();
+            this.setNextTopAlarm();
         }
-        if (this.bottomAlarm !== null && this.bottomAlarm! > price) {
+        if (this.bottomAlarm !== undefined && this.bottomAlarm.alarm > price) {
             console.log(this.coinId+": Alarma inferior excedida: "+price);
-            this.bottomAlarm = this.getNextBottomAlarm();
+            this.setNextBottomAlarm();
         }
     }
-    getNextTopAlarm():number {
-        return 3945.0;
+
+    setNextTopAlarm():void {
+        if (this.topAlarm != undefined && this.topAlarmList != undefined)
+            this.topAlarm = this.topAlarmList.values.shift();
     }
-    getNextBottomAlarm():number {
-        return 3920.0;
+
+    setNextBottomAlarm():void {
+        if (this.bottomAlarm != undefined && this.bottomAlarmList != undefined)
+            this.bottomAlarm = this.bottomAlarmList.values.shift();
     }
 }

@@ -1,0 +1,6 @@
+{
+    "values": [
+        {   "name": "binanceApiUri", "value": "https://api.binance.com/api/v3/avgPrice?symbol=", "description": "Servicio de consulta de precios de Binance."},
+        {   "name": "alarmBuffer", "value": 20, "description": "Cantidad de alarmas persistiendo en memoria: (value*2)" }
+    ]
+}
